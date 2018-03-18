@@ -1,0 +1,69 @@
+
+
+// account balance
+db.getCollection('Operations').aggregate(
+    { 
+        $match: {
+            type: 'transfer', 
+            to: 'kenchung', 
+            'amount.asset': 'SBD',
+			timestamp: {$gte : new Date("2018-01-01T23:45:00")},
+            from: {$in: ['htliao', 'linuslee0216']}
+        }
+    }, 
+    {
+        $group: {
+            _id: '$from', 
+            sbd: {$sum: '$amount.amount'}
+        }
+    }
+);
+
+//latest 100 use
+db.getCollection('AccountOperations').find({
+    'account':'helloworld123', 
+    'type':'vote'
+}).projection({
+    'author':1, 'permlink':1, 'timestamp':1, '_id':0
+}).sort({timestamp:-1}).limit(100)
+
+// today used?
+var start = new Date();
+start.setHours(0,0,0,0);
+var end = new Date();
+end.setHours(23,59,59,999);
+db.getCollection('AccountOperations').aggregate(
+	{
+		$match: {
+			account:'kenchung', 
+			type:'vote',
+			timestamp: {$gte : start, $lte: end},
+			author: {$in: ['htliao', 'linuslee0216']}
+		}
+	},
+	{
+		$group: {
+			_id: '$author', 
+            count: {$sum: 1}
+		}
+	}
+);
+
+// used how many times
+
+db.getCollection('AccountOperations').aggregate(
+	{
+		$match: {
+			account:'kenchung', 
+			type:'vote',
+			timestamp: {$gte : new Date("2018-01-01T00:00:00")},
+			author: {$in: ['htliao', 'linuslee0216']}
+		}
+	},
+	{
+		$group: {
+			_id: '$author', 
+            count: {$sum: 1}
+		}
+	}
+);

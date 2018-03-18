@@ -1,0 +1,22 @@
+_start = 451;
+_end = 600;
+
+for (i=_start; i<=_end; i++){
+	upvote(i);
+}
+
+function comment(i){
+	setTimeout(function(){
+		steem.broadcast.comment("", "vincentyip", "5eqxrl", "vincentyip", "test" + i, "", "test" + i, "", function(err, result) {
+		  console.log(err, result);
+		});
+	}, (i-_start)*30*1000);
+}
+
+function upvote(i){
+	setTimeout(function(){
+		steem.broadcast.vote("", "vincentyip", "vincentyip", "test" + i, 10000, function(err, result) {
+			console.log(err, result);
+		});
+	}, (i-_start)*5*1000);
+}
