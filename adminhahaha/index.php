@@ -131,14 +131,6 @@
 	
 		const requiredSP = 1500;
 		
-		historyRefresh();
-		statRefresh();
-		selfCheck();
-		
-		$('#selfcheck_button').click(function(){
-			selfCheck();
-		});
-		
 		$('#upvote_button').click(function(){
 			
 			$('#upvote_button').hide();
@@ -150,7 +142,7 @@
 			var permlink = temp[1];
 			var delay = Number($("#upvote_start").val()) * 60 * 1000;
 			var random_range = Math.max(0.5, Number($("#upvote_length").val())) * 60 * 1000;
-			var pad = Math.min(1, $("#upvote_strength").val()=="" ? 1 : Number($("#upvote_strength").val()) / 100);
+			var pad =  $("#upvote_strength").val()=="" ? 1 : Number($("#upvote_strength").val()) / 100;
 			
 				
 			$('#upvote_warning').html("Upvote in progress..."); 
@@ -159,95 +151,85 @@
 			// record usage 
 			var data = {'action': 'recordUsage', 'steemit': author, 'permLink': permlink};
 			$.post('ajax.php', data, function (response) {});
-
-				// get vest ratio
-				steem.api.getDynamicGlobalProperties(function(err, result) {
+				
+			// get Wif list
+			$.post('ajax.php', {'action': 'getWifVoterList'}, function (wifVoterList) {
+				
+				var counter = 0;
+				var time_start = new Date();
+				var timerObj = setInterval(myTimer, 1000);
+				$('#upvote_elpasedtime').css( "display", "block" );
+				
+				function myTimer() {
+					var d = new Date();
+					var minutes = Math.floor((d - time_start) / 60000);
+					var seconds = (((d - time_start) % 60000) / 1000).toFixed(0);
+					$('#upvote_elpasedtime').html("Time elapsed: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
+				}
+				
+				for (var i in wifVoterList){
+					upvote(wifVoterList[i].wif, wifVoterList[i].steemit, +(Number(wifVoterList[i].strength) * pad).toFixed(0));
+				}
+				
+				function updateStatus(){
+					$('#upvote_status').html(++counter + " out of " + wifVoterList.length + " accounts have been processed.");
+					if (counter == wifVoterList.length) {
+						$('#upvote_warning').html("Completed, you may close the browser now.");
+						clearInterval(timerObj);
+						$('#upvote_button').show();
+					}
+				}
+				
+				// set upvote events to be executed after some random time
+				function upvote(wif,username,weight){
 					
-					var steem_vest_ratio = parseFloat(result.total_vesting_fund_steem) / parseFloat(result.total_vesting_shares);
-					
-					// get Wif list
-					$.post('ajax.php', {'action': 'getWifVoterList'}, function (wifVoterList) {
+					setTimeout(function(){
 						
-						var counter = 0;
-						var time_start = new Date();
-						var timerObj = setInterval(myTimer, 1000);
-						$('#upvote_elpasedtime').css( "display", "block" );
-						
-						function myTimer() {
-							var d = new Date();
-							var minutes = Math.floor((d - time_start) / 60000);
-							var seconds = (((d - time_start) % 60000) / 1000).toFixed(0);
-							$('#upvote_elpasedtime').html("Time elapsed: " + minutes + ":" + (seconds < 10 ? '0' : '') + seconds);
-						}
-						
-						for (var i in wifVoterList){
-							var entitledVS = Math.min(1,(response.delegation * steem_vest_ratio / requiredSP ));
-							upvote(wifVoterList[i].wif, wifVoterList[i].steemit, +(Number(wifVoterList[i].strength) * pad * entitledVS).toFixed(0));
-						}
-						
-						function updateStatus(){
-							$('#upvote_status').html(++counter + " out of " + wifVoterList.length + " accounts have been processed.");
-							if (counter == wifVoterList.length) {
-								$('#upvote_warning').html("Completed, you may close the browser now.");
-								clearInterval(timerObj);
-								$('#upvote_button').show();
+						// get voted list
+						steem.api.getContent(author, permlink, function(err, result) {
+							
+							var votedList = result.active_votes;
+							
+							// vote only if not yet voted
+							found = false;
+							for (var j in votedList){
+								if (votedList[j].voter == username){
+									found = true;
+									break;
+								}
 							}
-						}
-						
-						// set upvote events to be executed after some random time
-						function upvote(wif,username,weight){
 							
-							setTimeout(function(){
-								
-								// get voted list
-								steem.api.getContent(author, permlink, function(err, result) {
-									
-									var votedList = result.active_votes;
-									
-									// vote only if not yet voted
-									found = false;
-									for (var j in votedList){
-										if (votedList[j].voter == username){
-											found = true;
-											break;
-										}
-									}
-									
-									if (!found){
-										steem.broadcast.vote(wif, username, author, permlink, weight, function(err, result) {
-											$('#upvote_details').css( "display", "block" );
-											$('#upvote_status').css( "display", "block" );
-											if (err === null) {
-												$('#upvote_details').html($('#upvote_details').html() + "[Bot success] " + username + " voted " + weight / 100 + "%<br>");
-											} else {
-												$('#upvote_details').html($('#upvote_details').html() + "[Bot failure] " + username + ' ' + err.stack.split('\n',2)[0] + ' ' + err.stack.split('\n',2)[1] + '<br>');
-											}
-											updateStatus();
-										});
+							if (!found){
+								steem.broadcast.vote(wif, username, author, permlink, weight, function(err, result) {
+									$('#upvote_details').css( "display", "block" );
+									$('#upvote_status').css( "display", "block" );
+									if (err === null) {
+										$('#upvote_details').html($('#upvote_details').html() + "[Bot success] " + username + " voted " + weight / 100 + "%<br>");
 									} else {
-										$('#upvote_details').css( "display", "block" );
-										$('#upvote_status').css( "display", "block" );
-										$('#upvote_details').html($('#upvote_details').html() + username + " has already voted." + "<br>");
-										updateStatus();
+										$('#upvote_details').html($('#upvote_details').html() + "[Bot failure] " + username + ' ' + err.stack.split('\n',2)[0] + ' ' + err.stack.split('\n',2)[1] + '<br>');
 									}
-									
+									updateStatus();
 								});
-								
-							}, delay + (username=='kenchung'?0:Math.random() * random_range));
+							} else {
+								$('#upvote_details').css( "display", "block" );
+								$('#upvote_status').css( "display", "block" );
+								$('#upvote_details').html($('#upvote_details').html() + username + " has already voted." + "<br>");
+								updateStatus();
+							}
 							
-						}
+						});
 						
-					});
+					}, delay + (username=='kenchung'?0:Math.random() * random_range));
 					
-				});
-					
+				}
+				
 			});
 			
 		});
 		
 		$('#addtg_button').click(function(){
 			if ($("#addtg_tg").val()!== '' && $("#addtg_steemit").val()!== ''){
-				var data = {'action': 'addtg', 'tg':$("#addtg_tg").val(), 'steemit':$$("#addtg_steemit").val()};
+				var data = {'action': 'addtg', 'tg':$("#addtg_tg").val(), 'steemit':$("#addtg_steemit").val()};
 				$.post('ajax.php', data, function (response) {
 					$("#addtg_output").css( "display", "block" );
 					$('#addtg_output').html(response);
@@ -292,7 +274,7 @@
 		URL: <input id="upvote_url" type="text" class="focus">
 		Start upvoting at X minutes from now (blank means 0):<input id="upvote_start" type="text" class="focus">
 		Voting will last for X minutes (blank means 0) (suggested minimum value = 1): <input id="upvote_length" type="text" class="focus">
-		X% to be applied on top of voting strengths (blank means 100%)(do not enter the % sign): <input id="upvote_strength" type="text" class="focus">
+		X% to be applied on top of voting strengths (blank means 100%)(do not enter the % sign) <b>REMEMBER TO CHECK DELEGATION</b>: <input id="upvote_strength" type="text" class="focus">
 		<div id="upvote_button" class="button">Upvote!</div>
 		<div id='upvote_warning' class='messagebox upvote'></div>
 		<div id='upvote_elpasedtime' class='messagebox upvote'></div>
