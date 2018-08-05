@@ -169,7 +169,7 @@ if (isset($_POST['action'])) {
 				$stmt->execute();
 				$result = $stmt->get_result()->fetch_assoc();
 			}
-			if ($result['count']==1){
+			if ($result['count']>0){
 				if ($stmt = $conn->prepare("INSERT INTO TgList(tg,steemit) VALUES(?,?)")){
 					$stmt->bind_param("ss", $_POST['tg'], $_POST['steemit']);
 					if($stmt->execute()===TRUE){

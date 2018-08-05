@@ -190,7 +190,12 @@
 							
 							for (var i in wifVoterList){
 								var entitledVS = Math.min(1,(response.delegation * steem_vest_ratio / requiredSP ));
-								upvote(wifVoterList[i].wif, wifVoterList[i].steemit, +(Number(wifVoterList[i].strength) * pad * entitledVS).toFixed(0));
+								if (wifVoterList[i].strength==0){
+									$('#upvote_details').html($('#upvote_details').html() + wifVoterList[i].steemit + " has set a voting strength of 0% and thus has been skipped.<br>");
+									updateStatus();
+								} else {
+									upvote(wifVoterList[i].wif, wifVoterList[i].steemit, +(Number(wifVoterList[i].strength) * pad * entitledVS).toFixed(0));
+								}
 							}
 							
 							function updateStatus(){
