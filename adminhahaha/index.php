@@ -129,7 +129,7 @@
 	<script type="text/javascript">
 	$(document).ready(function(){
 	
-		const requiredSP = 1500;
+		const requiredSP = 2000;
 		
 		$('#upvote_button').click(function(){
 			

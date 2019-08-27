@@ -125,11 +125,11 @@
 	}
 	</style>
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
-	<script type="text/javascript" src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/steem/dist/steem.min.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function(){
 	
-		const requiredSP = 1500;
+		const requiredSP = 2000;
 		
 		historyRefresh();
 		statRefresh();
@@ -680,7 +680,7 @@
 		<div class="instruction">
 		
 		<p><b>最新消息</b></p>
-		<p><b>1.</b> 所有使用者必須delegate至hkfund方可使用bot。Delegation要求為每人(並非每個account)1500SP，如果不足1500SP會按比例扣減你所獲得投票力度。大家可以去「Users / post statistics」第二個表查閱自己可獲得嘅投票力度。</p>
+		<p><b>1.</b> 所有使用者必須delegate至hkfund方可使用bot。Delegation要求為每人(並非每個account)2000SP，如果不足2000SP會按比例扣減你所獲得投票力度。大家可以去「Users / post statistics」第二個表查閱自己可獲得嘅投票力度。</p>
 		<p><b>2.</b> 每人(並非每個account)每日只可使用bot一次。「每日」係根據GMT+4時區而定義，亦即香港時間凌晨四點係新嘅一日。之前已經使用過bot嘅link可以無限次重新使用bot。</p>
 		<p><b>3.</b> 當每次有人使用bot vote嘅時候，bot會自動幫所有人claim pending rewards。</p>
 		
@@ -711,7 +711,7 @@
 		
 		<br>
 		
-		<p><b>Q</b>: 1500SP呢個數會唔會轉？</p>
+		<p><b>Q</b>: 2000SP呢個數會唔會轉？</p>
 		<p><b>A</b>: 我希望會一直慢慢增加，咁先會令到我哋愈滾愈大。如果數字有改變的話，會預先喺telegram公佈。</p>
 		
 		<br>
