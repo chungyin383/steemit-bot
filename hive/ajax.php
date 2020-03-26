@@ -276,10 +276,16 @@ if (isset($_POST['action'])) {
 			break;
 			
 		case 'recordUsage':
-			$result = $conn->query("DELETE FROM VoteHist ORDER BY timestamp ASC LIMIT 1");
-			if ($stmt = $conn->prepare("INSERT INTO VoteHist(steemit, permlink) VALUES(?,?)")){
-				$stmt->bind_param("ss", $_POST['steemit'], $_POST['permLink']);
+			if ($stmt = $conn->prepare("SELECT COUNT(*) AS count FROM VoteHist")){
 				$stmt->execute();
+				$result = $stmt->get_result()->fetch_assoc();
+				if ($result['count']>=50){
+					$result = $conn->query("DELETE FROM VoteHist ORDER BY timestamp ASC LIMIT 1");
+				}
+				if ($stmt = $conn->prepare("INSERT INTO VoteHist(steemit, permlink) VALUES(?,?)")){
+					$stmt->bind_param("ss", $_POST['steemit'], $_POST['permLink']);
+					$stmt->execute();
+				}
 			}
 			break;	
 		

@@ -3,7 +3,7 @@
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8"/>
 	<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-	<title>LIHKG Steemit Vote Bot</title>
+	<title>LIHKG Hive Vote Bot</title>
 	<style>
 	body{
 		font-family: 'Montserrat', 'Microsoft JhengHei', sans-serif;
@@ -125,7 +125,7 @@
 	}
 	</style>
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/steem/dist/steem.min.js"></script>
+	<script type="text/javascript" src="steem.min.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function(){
 	
@@ -595,10 +595,10 @@
 	</script>
 </head>
 <body>
-	<div class='header'>LIHKG Steemit Voting Bot</div>
+	<div class='header'>LIHKG Hive Voting Bot</div>
 	<div class="section">
 		<div class="title">Bot最近還好嗎？</div>
-		<div class="instruction">以下會嘗試自我檢查睇吓一切是否安好，如果有問題的話可以嘗試去呢條後備link：<a href='./index1.php'>steem.net23.net/kenisgood/index1.php</a>。</div>
+		<div class="instruction">以下會嘗試自我檢查睇吓一切是否安好。</div>
 		<div id="selfcheck_button" class="button">自我檢查</div>
 		<div id='selfcheck_status' class='messagebox'></div>
 	</div>
