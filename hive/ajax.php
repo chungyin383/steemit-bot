@@ -76,7 +76,7 @@ if (isset($_POST['action'])) {
 					SELECT 
 						TgList.tg, 
 						SUM(d.delegation) AS delegation,
-						CONCAT('https://steemit.com/@', TgList.steemit, '/', VoteHistToday.permlink) AS url
+						CONCAT('https://hive.blog/@', TgList.steemit, '/', VoteHistToday.permlink) AS url
 					FROM (
 						SELECT Delegation.*
 						FROM Delegation
@@ -118,7 +118,7 @@ if (isset($_POST['action'])) {
 			if ($result = $conn->query("
 					SELECT
 						CONVERT_TZ(timestamp,'+00:00','+08:00') AS timestamp,
-						CONCAT('https://steemit.com/@', steemit, '/', permlink) AS url
+						CONCAT('https://hive.blog/@', steemit, '/', permlink) AS url
 					FROM VoteHist
 					ORDER BY timestamp DESC
 				")){
@@ -262,7 +262,7 @@ if (isset($_POST['action'])) {
 						$arr['message'] = 'Hi ' . $arr['tg'] . ', you have not delegated any SP to our mutual account <i>hkfund</i>, therefore you cannot use the bot now. If you believe this is a mistake, please close this tab and reload again, this may be a system error.';
 					} else {
 						if ($arr['usedlink'] != NULL){
-							$link = 'http://steemit.com/@' . $_POST['steemit'] . '/' . $arr['usedlink'];
+							$link = 'http://hive.blog/@' . $_POST['steemit'] . '/' . $arr['usedlink'];
 							$arr['message'] = 'Hi ' . $arr['tg'] . ', you have used the bot on another link <a href="' . $link . '">' . $link . '</a> today already, therefore you cannot use the bot again today.';
 						} else {
 							$arr['message'] = 'Hi ' . $arr['tg'] . ', your post is being upvoted, please wait and do not close the tab before all votes have been casted.';

@@ -434,7 +434,7 @@
 
 				rsbd = parseFloat(reward_sbd);
 				rspw = parseFloat(reward_steempower); // Could also check for reward_vesting_balance instead
-
+				
 				// Claim rewards if there is SBD and/or SP to claim
 				if (rsbd > 0 || rspw > 0) {
 					publicKey = response[0].posting.key_auths[0][0]; // Get public key on the blockchain
@@ -443,7 +443,7 @@
 					// However, we want to claim everything.
 
 					//steem.broadcast.claimRewardBalance(privateKey, name, reward_steem, '0.005 SBD', '10.000000 VESTS', function (err, response) { // for testing
-					steem.broadcast.claimRewardBalance(privateKey, name, reward_steem, reward_sbd, reward_vests, function (err, response) {
+					steem.broadcast.claimRewardBalance(privateKey, name, reward_steem.replace('HIVE', 'STEEM'), reward_sbd.replace('HBD', 'SBD'), reward_vests, function (err, response) {
 						if (err) {
 							console.log('Error claiming reward for', account);
 						}
@@ -452,7 +452,7 @@
 							confirm_account = operationResult.account;
 							confirm_reward_sbd = operationResult.reward_sbd;
 							confirm_reward_vests = operationResult.reward_vests;
-							console.log(confirm_account, 'claimed', confirm_reward_sbd, 'and', rspw, 'SP (', confirm_reward_vests, ')');
+							console.log(confirm_account, 'claimed', confirm_reward_sbd, 'and', rspw, 'HP (', confirm_reward_vests, ')');
 						}
 					});
 				
